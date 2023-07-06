@@ -20,7 +20,7 @@
       <TextField fx:id="tf_login" layoutX="43.0" layoutY="347.0" prefHeight="26.0" prefWidth="333.0" promptText="Логин" />
       <TextField fx:id="tf_address" layoutX="43.0" layoutY="248.0" prefHeight="26.0" prefWidth="333.0" promptText="Адрес" />
       <TextField fx:id="tf_phone_number" layoutX="43.0" layoutY="297.0" prefHeight="26.0" prefWidth="333.0" promptText="Номер телефона" />
-      <Button fx:id="button_sign_up" layoutX="148.0" layoutY="503.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="123.0" style="-fx-background-color: A0C49D;" text="Регистрация">
+      <Button fx:id="button_sign_up" layoutX="130.0" layoutY="510.0" mnemonicParsing="false" onAction="#signUpButtonOnAction" prefHeight="26.0" prefWidth="146.0" style="-fx-background-color: A0C49D;" text="Зарегистрироваться">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
@@ -38,5 +38,17 @@
             <Font name="System Bold" size="12.0" />
          </font>
       </Button>
+      <Label layoutX="148.0" layoutY="563.0" text="* - обязательное поле">
+         <font>
+            <Font name="Arial Rounded MT Bold" size="11.0" />
+         </font>
+      </Label>
+      <Label layoutX="377.0" layoutY="82.0" text="*" />
+      <Label layoutX="377.0" layoutY="134.0" text="*" />
+      <Label layoutX="377.0" layoutY="239.0" text="*" />
+      <Label layoutX="377.0" layoutY="288.0" text="*" />
+      <Label layoutX="377.0" layoutY="338.0" text="*" />
+      <Label layoutX="377.0" layoutY="385.0" text="*" />
+      <Label layoutX="377.0" layoutY="434.0" text="*" />
    </children>
 </AnchorPane>

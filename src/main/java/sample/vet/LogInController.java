@@ -66,7 +66,7 @@ public class LogInController implements Initializable {
     }
     private void validateLogin() throws ClassNotFoundException, SQLException {
         DbConnection connection = DbConnection.getInstance();
-        String verifyLogin = "SELECT COUNT(1) FROM Users WHERE username = '" + tf_username.getText() + "' AND password = '" + connection.hashPass(pf_password.getText())+"'";
+        String verifyLogin = "SELECT COUNT(1) FROM Users WHERE username = '" + tf_username.getText() + "' AND password = '" + User.hashPass(pf_password.getText())+"'";
         try {
             Statement statement = connection.getConnection().createStatement();
             ResultSet queryResult = statement.executeQuery(verifyLogin);

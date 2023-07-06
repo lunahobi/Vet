@@ -2,9 +2,7 @@ package sample.vet;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class DbConnection {
     private static DbConnection instance;
@@ -35,22 +33,43 @@ public class DbConnection {
         return connection;
     }
 
-    public static void main(String[] args) throws ClassNotFoundException {
-        DbConnection connection1 = new DbConnection();
+
+    public void registerOwner(Owner owner) throws SQLException {
+        String query = "INSERT INTO Users(username, password, role_id) VALUES (?, ?, ?)";
+        PreparedStatement statement = connection.prepareStatement(query);
+        statement.setString(1, owner.getUsername());
+        statement.setString(2, owner.getPassword());
+        statement.setLong(3, owner.getRole_id());
+        statement.executeUpdate();
+
+
+        String query2 = "INSERT INTO Owners(last_name, first_name, second_name, address, phone_number, user_id) VALUES " +
+                "(?, ?, ?, ?, ?, ?)";
+
+        PreparedStatement statement2 = connection.prepareStatement(query2);
+        statement2.setString(1, owner.getLast_name());
+        statement2.setString(2, owner.getFirst_name());
+        statement2.setString(3, owner.getSecond_name());
+        statement2.setString(4, owner.getAddress());
+        statement2.setString(5, owner.getPhone_number());
+        statement2.setInt(6, getUserID(owner.getUsername()));
+        statement2.executeUpdate();
     }
-    public String hashPass(String pass) {
-        MessageDigest md5 = null;
-        try {
-            md5 = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        assert md5 != null;
-        byte[] bytes = md5.digest(pass.getBytes());
-        StringBuilder hashPass = new StringBuilder();
-        for (byte b : bytes) {
-            hashPass.append(String.format("%02X", b));
-        }
-        return hashPass.toString();
+    public int getUserID(String username) throws SQLException {
+        String query = "SELECT user_id FROM Users WHERE username = ?";
+        PreparedStatement statement = connection.prepareStatement(query);
+        statement.setString(1, username);
+        ResultSet result = statement.executeQuery();
+        int id = 0;
+        if (result.next())
+            id = result.getInt("user_id");
+        return id;
+    }
+    public boolean isUserNameExists(String username) throws SQLException {
+        String query = "SELECT COUNT(*) FROM Users WHERE username = ?";
+        PreparedStatement statement = connection.prepareStatement(query);
+        statement.setString(1, username);
+        ResultSet resultSet = statement.executeQuery();
+        return resultSet.next() && resultSet.getInt(1) > 0;
     }
 }
