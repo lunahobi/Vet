@@ -1,6 +1,6 @@
 package sample.vet;
 
-class Owner extends User{
+public class Owner extends User{
     private long owner_id;
     private String last_name;
     private String first_name;
@@ -8,7 +8,7 @@ class Owner extends User{
     private String address;
     private String phone_number;
     public Owner(long owner_id, String last_name, String first_name, String second_name, String address, String phone_number, String login, String password){
-        super(login, password, 1);
+        super(login, password, 2);
         this.owner_id = owner_id;
         this.last_name = last_name;
         this.first_name = first_name;
@@ -17,7 +17,7 @@ class Owner extends User{
         this.phone_number = phone_number;
     }
     public Owner(String last_name, String first_name, String second_name, String address, String phone_number, String login, String password){
-        super(login, password, 1);
+        super(login, password, 2);
         this.last_name = last_name;
         this.first_name = first_name;
         this.second_name = second_name;

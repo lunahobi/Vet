@@ -34,7 +34,7 @@ public class SignUpController {
     @FXML
     private Button button_login;
     public void logInButtonOnAction(ActionEvent event){
-        Transition.changeScene(event, "log-in-view.fxml", 600, 400);
+        Main.changeScene("log-in-view.fxml");
     }
     public void signUpButtonOnAction(ActionEvent event) throws SQLException, ClassNotFoundException {
         if (pf_confirm_password.getText().equals(pf_password.getText())){
