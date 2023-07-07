@@ -1,11 +1,13 @@
 package sample.vet;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class DbConnection {
     private static DbConnection instance;
-    private Connection connection;
+    private static Connection connection;
 
     private DbConnection() throws ClassNotFoundException {
         try {
@@ -118,12 +120,13 @@ public class DbConnection {
         statement2.executeUpdate();
     }
 
-    public Owner getOwnerByUsername(String username) throws SQLException {
-        String query = "SELECT last_name, first_name, second_name, address, phone_number, username, password FROM Owners JOIN Users USING (user_id) WHERE username = ?";
+    public static Owner getOwnerByUsername(String username) throws SQLException {
+        String query = "SELECT owner_id, last_name, first_name, second_name, address, phone_number, username, password FROM Owners JOIN Users USING (user_id) WHERE username = ?";
         PreparedStatement statement = connection.prepareStatement(query);
         statement.setString(1, username);
         ResultSet resultSet = statement.executeQuery();
         if (resultSet.next()) {
+            int id = resultSet.getInt("owner_id");
             String last_name = resultSet.getString("last_name");
             String first_name = resultSet.getString("first_name");
             String second_name = resultSet.getString("second_name");
@@ -131,8 +134,111 @@ public class DbConnection {
             String phone_number = resultSet.getString("phone_number");
             String password = resultSet.getString("password");
 
-            return new Owner(last_name, first_name, second_name, address, phone_number, username, password);
+            return new Owner(id, last_name, first_name, second_name, address, phone_number, username, password);
         }
         return null;
+    }
+    public static Breed getBreedById(int breed_id) {
+        String query = "SELECT breed_id, name FROM Breeds WHERE breed_id = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, breed_id);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                int id = rs.getInt("breed_id");
+                String name = rs.getString("name");
+
+                return new Breed(id, name);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static List<Animal> getInfoAboutPet() {
+        List<Animal> petList = new ArrayList<>();
+
+        try {
+            String query = "SELECT animal_id, name, breed_id FROM Animals WHERE owner_id = ?";
+            Long owner_id = (long) getOwnerByUsername(LogInController.owner.getUsername()).getOwner_id();
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setLong(1,owner_id);
+
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                long id = rs.getLong("animal_id");
+                String name = rs.getString("name");
+                int breedId = rs.getInt("breed_id");
+
+                Breed breed = getBreedById(breedId);
+                Animal pet = new Animal(id, owner_id, breed.getName(), name);
+                petList.add(pet);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return petList;
+    }
+    public Long getBreedIdByName(String name) throws SQLException {
+        String query = "SELECT breed_id FROM Breeds WHERE name = ?";
+        PreparedStatement statement = connection.prepareStatement(query);
+        statement.setString(1, name);
+        ResultSet result = statement.executeQuery();
+        long breed_id = 0;
+        if (result.next())
+            breed_id = result.getInt("breed_id");
+        return breed_id;
+    }
+    public void addAnimal(String name, String breed) throws SQLException {
+        Long breed_id = getBreedIdByName(breed);
+        if (breed_id == 0){
+            String query2 = "INSERT INTO Breeds(name) VALUES(?)" ;
+            PreparedStatement statement2 = connection.prepareStatement(query2);
+            statement2.setString(1, breed);
+            statement2.executeUpdate();
+            String query3 = "SELECT breed_id FROM Breeds WHERE name = ?";
+            PreparedStatement statement3 = connection.prepareStatement(query3);
+            statement3.setString(1, breed);
+            ResultSet result1 = statement3.executeQuery();
+            if (result1.next())
+                breed_id = result1.getLong("breed_id");
+        }
+        Long owner_id = (long) getOwnerByUsername(LogInController.owner.getUsername()).getOwner_id();
+        String query1 = "INSERT INTO Animals(owner_id, breed_id, name) VALUES(?, ?, ?)" ;
+        PreparedStatement statement1 = connection.prepareStatement(query1);
+        statement1.setLong(1, owner_id);
+        statement1.setLong(2, breed_id);
+        statement1.setString(3, name);
+        statement1.executeUpdate();
+    }
+
+    public void updateAnimal(Long id, String name, String breed) throws SQLException {
+        Long breed_id = getBreedIdByName(breed);
+        if (breed_id == 0){
+            String query2 = "INSERT INTO Breeds(name) VALUES(?)" ;
+            PreparedStatement statement2 = connection.prepareStatement(query2);
+            statement2.setString(1, breed);
+            statement2.executeUpdate();
+            String query3 = "SELECT breed_id FROM Breeds WHERE name = ?";
+            PreparedStatement statement3 = connection.prepareStatement(query3);
+            statement3.setString(1, breed);
+            ResultSet result1 = statement3.executeQuery();
+            if (result1.next())
+                breed_id = result1.getLong("breed_id");
+        }
+        String query2 = "UPDATE Animals SET name = ?, breed_id = ? WHERE animal_id = ?";
+        PreparedStatement statement2 = connection.prepareStatement(query2);
+        statement2.setString(1, name);
+        statement2.setLong(2, breed_id);
+        statement2.setLong(3, id);
+        statement2.executeUpdate();
+    }
+    public void deleteAnimal(Long id) throws SQLException {
+        String query = "DELETE FROM Animals WHERE animal_id = ?";
+        PreparedStatement statement2 = connection.prepareStatement(query);
+        statement2.setLong(1, id);
+        statement2.executeUpdate();
     }
 }

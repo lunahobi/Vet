@@ -3,17 +3,17 @@ package sample.vet;
 public class Animal {
     private long animal_id;
     private  long owner_id;
-    private long breed_id;
+    private String breed;
     private String name;
-    public Animal(long animal_id, Long owner_id, long breed_id, String name){
+    public Animal(long animal_id, Long owner_id, String breed, String name){
         this.animal_id = animal_id;
         this.owner_id = owner_id;
-        this.breed_id = breed_id;
+        this.breed = breed;
         this.name = name;
     }
-    public Animal(Long owner_id, long breed_id, String name){
+    public Animal(Long owner_id, String  breed, String name){
         this.owner_id = owner_id;
-        this.breed_id = breed_id;
+        this.breed = breed;
         this.name = name;
     }
 
@@ -25,8 +25,8 @@ public class Animal {
         return owner_id;
     }
 
-    public long getBreed_id() {
-        return breed_id;
+    public String  getBreed() {
+        return breed;
     }
 
     public String getName() {
@@ -41,8 +41,8 @@ public class Animal {
         this.owner_id = owner_id;
     }
 
-    public void setBreed_id(long breed_id) {
-        this.breed_id = breed_id;
+    public void setBreed(String breed) {
+        this.breed = breed;
     }
 
     public void setName(String name) {

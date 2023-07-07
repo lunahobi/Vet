@@ -48,6 +48,10 @@ public class OwnerController implements Initializable {
     private TableColumn<Owner, String> address;
     @FXML
     private TableColumn<Owner, String> phone_number;
+    @FXML
+    private Button button_pets;
+    @FXML
+    private Button button_visits;
     public static Owner owner = LogInController.owner;
 
 
@@ -58,6 +62,8 @@ public class OwnerController implements Initializable {
         Image userImage = new Image(userFile.toURI().toString());
         iv_user.setImage(userImage);
         label_first_name.setText(LogInController.owner.getFirst_name());
+        button_pets.setOnAction(actionEvent -> {Main.changeScene("animal-view.fxml");});
+        button_logout.setOnAction(actionEvent -> {Main.changeScene("log-in-view.fxml");});
     }
     private void updateTable(){
         table_info.getItems().clear();
@@ -71,9 +77,6 @@ public class OwnerController implements Initializable {
         second_name.setCellValueFactory(new PropertyValueFactory<Owner, String>("second_name"));
         phone_number.setCellValueFactory(new PropertyValueFactory<Owner, String>("phone_number"));
         address.setCellValueFactory(new PropertyValueFactory<Owner, String>("address"));
-    }
-    public void logOutButtonOnAction(ActionEvent event){
-        Main.changeScene("log-in-view.fxml");
     }
     public void updateButtonOnAction() throws ClassNotFoundException, SQLException {
         if (pf_confirm_password.getText().equals(pf_password.getText())){
