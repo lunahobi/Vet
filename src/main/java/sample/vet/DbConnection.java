@@ -328,5 +328,48 @@ public class DbConnection {
         }
         return diseases;
     }
+    public static Doctor getDoctorByUsername(String username){
+        try {
+            String query = "SELECT doctor_id, last_name, first_name, second_name, address, phone_number, username, password FROM Doctors JOIN Users USING (user_id) WHERE username = ?";
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1, username);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                int id = resultSet.getInt("doctor_id");
+                String last_name = resultSet.getString("last_name");
+                String first_name = resultSet.getString("first_name");
+                String second_name = resultSet.getString("second_name");
+                String address = resultSet.getString("address");
+                String phone_number = resultSet.getString("phone_number");
+                String password = resultSet.getString("password");
+
+                return new Doctor(id, last_name, first_name, second_name, address, phone_number, username, password);
+            }
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+    public void updateDoctor(Doctor doctor) throws SQLException {
+        int user_id = getUserID(LogInController.doctor.getUsername());
+
+        String query1 = "UPDATE Users SET password = ?, role_id = ? WHERE user_id = ?";
+        PreparedStatement statement1 = connection.prepareStatement(query1);
+        statement1.setString(1, doctor.getPassword());
+        statement1.setLong(2, getRoleIdByUsername(LogInController.doctor.getUsername()));
+        statement1.setInt(3, user_id);
+        statement1.executeUpdate();
+
+        String query2 = "UPDATE Doctors SET last_name = ?, first_name = ?, second_name = ?, address = ?, phone_number = ? WHERE user_id = ?";
+        PreparedStatement statement2 = connection.prepareStatement(query2);
+        statement2.setString(1, doctor.getLast_name());
+        statement2.setString(2, doctor.getFirst_name());
+        statement2.setString(3, doctor.getSecond_name());
+        statement2.setString(4, doctor.getAddress());
+        statement2.setString(5, doctor.getPhone_number());
+        statement2.setInt(6, user_id);
+        statement2.executeUpdate();
+    }
 }
 

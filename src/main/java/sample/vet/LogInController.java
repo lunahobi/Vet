@@ -41,9 +41,8 @@ public class LogInController implements Initializable {
     private Label label_text;
     @FXML
     private ImageView logoImageView;
-    private static String first_name;
-    private static String username;
     public static Owner owner;
+    public static Doctor doctor;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -79,8 +78,12 @@ public class LogInController implements Initializable {
             while (queryResult.next()){
                 if (queryResult.getInt(1) == 1){
                     int role_id = DbConnection.getInstance().getRoleIdByUsername(tf_username.getText());
-                    if (role_id == 2){
+                    if (role_id == 1){
 
+                        doctor = DbConnection.getInstance().getDoctorByUsername(tf_username.getText());
+                        Main.changeScene("doctor-view.fxml");
+                    }
+                    else if (role_id == 2){
                         owner = DbConnection.getInstance().getOwnerByUsername(tf_username.getText());
                         Main.changeScene("owner-view.fxml");
                     }
