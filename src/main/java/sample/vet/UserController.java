@@ -1,33 +1,23 @@
 package sample.vet;
 
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.ImageCursor;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.stage.Stage;
-import org.controlsfx.control.action.Action;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ResourceBundle;
-import java.util.SortedMap;
-import java.util.Stack;
 
-public class LogInController implements Initializable {
+public class UserController implements Initializable {
     @FXML
     private Button button_login;
 
@@ -86,6 +76,9 @@ public class LogInController implements Initializable {
                     else if (role_id == 2){
                         owner = DbConnection.getInstance().getOwnerByUsername(tf_username.getText());
                         Main.changeScene("owner-view.fxml");
+                    }
+                    else{
+                        Main.changeScene("admin-view.fxml");
                     }
                 }
                 else {

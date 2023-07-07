@@ -15,11 +15,7 @@ import javafx.scene.input.MouseEvent;
 
 import java.io.File;
 import java.net.URL;
-import java.sql.SQLException;
-import java.sql.Time;
-import java.util.Date;
 import java.util.ResourceBundle;
-import java.util.Timer;
 
 import static sample.vet.DbConnection.*;
 
@@ -80,7 +76,7 @@ public class AppointmentContoller implements Initializable {
         File userFile = new File("images/user_white.png");
         Image userImage = new Image(userFile.toURI().toString());
         iv_user.setImage(userImage);
-        label_first_name.setText(LogInController.owner.getFirst_name());
+        label_first_name.setText(UserController.owner.getFirst_name());
         button_logout.setOnAction(actionEvent -> {Main.changeScene("log-in-view.fxml");});
         button_profile.setOnAction(actionEvent -> {Main.changeScene("owner-view.fxml");});
         buttonPets.setOnAction(actionEvent -> {Main.changeScene("animal-view.fxml");});

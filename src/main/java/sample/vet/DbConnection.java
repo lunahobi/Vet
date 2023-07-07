@@ -5,7 +5,6 @@ import javafx.collections.ObservableList;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 
@@ -61,6 +60,27 @@ public class DbConnection {
         statement2.setInt(6, getUserID(owner.getUsername()));
         statement2.executeUpdate();
     }
+    public void registerDoctor(Doctor doctor) throws SQLException {
+        String query = "INSERT INTO Users(username, password, role_id) VALUES (?, ?, ?)";
+        PreparedStatement statement = connection.prepareStatement(query);
+        statement.setString(1, doctor.getUsername());
+        statement.setString(2, doctor.getPassword());
+        statement.setLong(3, doctor.getRole_id());
+        statement.executeUpdate();
+
+
+        String query2 = "INSERT INTO Doctors(last_name, first_name, second_name, address, phone_number, user_id) VALUES " +
+                "(?, ?, ?, ?, ?, ?)";
+
+        PreparedStatement statement2 = connection.prepareStatement(query2);
+        statement2.setString(1, doctor.getLast_name());
+        statement2.setString(2, doctor.getFirst_name());
+        statement2.setString(3, doctor.getSecond_name());
+        statement2.setString(4, doctor.getAddress());
+        statement2.setString(5, doctor.getPhone_number());
+        statement2.setInt(6, getUserID(doctor.getUsername()));
+        statement2.executeUpdate();
+    }
 
     public int getUserID(String username) throws SQLException {
         String query = "SELECT user_id FROM Users WHERE username = ?";
@@ -104,12 +124,12 @@ public class DbConnection {
     }
 
     public void updateOwner(Owner owner) throws SQLException {
-        int user_id = getUserID(LogInController.owner.getUsername());
+        int user_id = getUserID(UserController.owner.getUsername());
 
         String query1 = "UPDATE Users SET password = ?, role_id = ? WHERE user_id = ?";
         PreparedStatement statement1 = connection.prepareStatement(query1);
         statement1.setString(1, owner.getPassword());
-        statement1.setLong(2, getRoleIdByUsername(LogInController.owner.getUsername()));
+        statement1.setLong(2, getRoleIdByUsername(UserController.owner.getUsername()));
         statement1.setInt(3, user_id);
         statement1.executeUpdate();
 
@@ -173,7 +193,7 @@ public class DbConnection {
 
         try {
             String query = "SELECT animal_id, name, breed_id FROM Animals WHERE owner_id = ?";
-            Long owner_id = (long) getOwnerByUsername(LogInController.owner.getUsername()).getOwner_id();
+            Long owner_id = (long) getOwnerByUsername(UserController.owner.getUsername()).getOwner_id();
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setLong(1, owner_id);
 
@@ -218,7 +238,7 @@ public class DbConnection {
             if (result1.next())
                 breed_id = result1.getLong("breed_id");
         }
-        Long owner_id = (long) getOwnerByUsername(LogInController.owner.getUsername()).getOwner_id();
+        Long owner_id = (long) getOwnerByUsername(UserController.owner.getUsername()).getOwner_id();
         String query1 = "INSERT INTO Animals(owner_id, breed_id, name) VALUES(?, ?, ?)";
         PreparedStatement statement1 = connection.prepareStatement(query1);
         statement1.setLong(1, owner_id);
@@ -258,7 +278,7 @@ public class DbConnection {
 
     public static List<AppointmentInfo> getVisitsByOwnerId(){
         List<AppointmentInfo> visits = new ArrayList<>();
-        int owner_id = getOwnerByUsername(LogInController.owner.getUsername()).getOwner_id();
+        int owner_id = getOwnerByUsername(UserController.owner.getUsername()).getOwner_id();
         try {
             String query = "SELECT a.appointment_id, d.first_name, d.last_name, d.second_name, p.animal_id, p.name AS petName, a.date, a.time "
                     + "FROM Appointments a "
@@ -371,12 +391,12 @@ public class DbConnection {
         return null;
     }
     public void updateDoctor(Doctor doctor) throws SQLException {
-        int user_id = getUserID(LogInController.doctor.getUsername());
+        int user_id = getUserID(UserController.doctor.getUsername());
 
         String query1 = "UPDATE Users SET password = ?, role_id = ? WHERE user_id = ?";
         PreparedStatement statement1 = connection.prepareStatement(query1);
         statement1.setString(1, doctor.getPassword());
-        statement1.setLong(2, getRoleIdByUsername(LogInController.doctor.getUsername()));
+        statement1.setLong(2, getRoleIdByUsername(UserController.doctor.getUsername()));
         statement1.setInt(3, user_id);
         statement1.executeUpdate();
 
@@ -392,7 +412,7 @@ public class DbConnection {
     }
     public static List<AppointmentDoctorInfo> getVisitsByDoctorId(){
         List<AppointmentDoctorInfo> visits = new ArrayList<>();
-        int doctor_id = getDoctorByUsername(LogInController.doctor.getUsername()).getDoctor_id();
+        int doctor_id = getDoctorByUsername(UserController.doctor.getUsername()).getDoctor_id();
         try {
             String query = "SELECT b.name, a.appointment_id, d.first_name, d.last_name, d.second_name, p.animal_id, p.name AS petName, a.date, a.time  "
                     + "FROM Appointments a "
@@ -424,7 +444,7 @@ public class DbConnection {
     }
     public static List<AppointmentDoctorInfo> getVisitsTodayByDoctorId(){
         List<AppointmentDoctorInfo> visits = new ArrayList<>();
-        int doctor_id = getDoctorByUsername(LogInController.doctor.getUsername()).getDoctor_id();
+        int doctor_id = getDoctorByUsername(UserController.doctor.getUsername()).getDoctor_id();
         try {
             String query = "SELECT b.name, a.appointment_id, d.first_name, d.last_name, d.second_name, p.animal_id, p.name AS petName, a.date, a.time "
                     + "FROM Appointments a "

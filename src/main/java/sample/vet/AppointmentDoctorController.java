@@ -79,7 +79,7 @@ public class AppointmentDoctorController implements Initializable {
         File userFile = new File("images/user_white.png");
         Image userImage = new Image(userFile.toURI().toString());
         iv_user.setImage(userImage);
-        label_first_name.setText(LogInController.doctor.getFirst_name());
+        label_first_name.setText(UserController.doctor.getFirst_name());
         button_logout.setOnAction(actionEvent -> {Main.changeScene("log-in-view.fxml");});
         button_profile.setOnAction(actionEvent -> {Main.changeScene("doctor-view.fxml");});
     }
