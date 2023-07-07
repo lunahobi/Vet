@@ -14,7 +14,9 @@ import javafx.scene.input.MouseEvent;
 import java.io.File;
 import java.net.URL;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.util.ResourceBundle;
+import java.util.Timer;
 
 import static sample.vet.DbConnection.getInfoAboutPet;
 
@@ -46,6 +48,8 @@ public class AnimalController implements Initializable {
     @FXML
     TextField tf_name;
     @FXML
+    Label label_message;
+    @FXML
     TextField tf_breed;
     long id = 0;
     private final ObservableList<Animal> data = FXCollections.observableArrayList();
@@ -75,23 +79,41 @@ public class AnimalController implements Initializable {
     }
     @FXML
     void addPet(ActionEvent event) throws SQLException, ClassNotFoundException {
-        DbConnection.getInstance().addAnimal(tf_name.getText(), tf_breed.getText());
-        updateTable();
+        if (tf_name.getText().equals("") || tf_breed.getText().equals("")){
+            label_message.setText("Не все поля заполнены");
+        }
+        else{
+            DbConnection.getInstance().addAnimal(tf_name.getText(), tf_breed.getText());
+            updateTable();
+        }
+
     }
     @FXML
     void deletePet(ActionEvent event) throws SQLException, ClassNotFoundException {
         DbConnection.getInstance().deleteAnimal(id);
+        if (id == 0){
+            label_message.setText("Не выбрана запись из таблицы");
+        }
+        else{
+            label_message.setText("Успешно удалены записи о питомце с id "+ id);
+        }
         updateTable();
     }
     @FXML
     void updatePet(ActionEvent event) throws SQLException, ClassNotFoundException {
         DbConnection.getInstance().updateAnimal(id, tf_name.getText(), tf_breed.getText());
+        if (id == 0){
+            label_message.setText("Не выбрана запись из таблицы");
+        }
+        else{
+            label_message.setText("Успешно обновлена запись о питомце с id "+ id);
+        }
         updateTable();
     }
     @FXML
     void clearFields(){
-        tf_breed.setText(null);
-        tf_name.setText(null);
+        tf_breed.setText("");
+        tf_name.setText("");
     }
     @FXML
     void getData(MouseEvent event) {
