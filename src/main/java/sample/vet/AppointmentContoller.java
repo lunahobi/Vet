@@ -114,7 +114,6 @@ public class AppointmentContoller implements Initializable {
         AppointmentInfo appointmentInfo = tv_appointment.getSelectionModel().getSelectedItem();
         id = appointmentInfo.getId();
         updateTable1();
-
     }
 
 }

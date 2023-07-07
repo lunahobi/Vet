@@ -306,6 +306,25 @@ public class DbConnection {
         }
         return null;
     }
+    public static String getOwnerNameByAppointmentId(int appointment_id){
+        try {
+            String query = "SELECT first_name, last_name, second_name FROM Owners JOIN Appointments USING(owner_id) WHERE appointment_id = ?";
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1, appointment_id);
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                String first_name = resultSet.getString("first_name");
+                String last_name = resultSet.getString("last_name");
+                String second_name = resultSet.getString("second_name");
+                return last_name + " " + first_name + " " + second_name;
+            }
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
     public static ObservableList<Disease> getDiseasesByVisitId(int visitId) {
         ObservableList<Disease> diseases = FXCollections.observableArrayList();
 
@@ -370,6 +389,69 @@ public class DbConnection {
         statement2.setString(5, doctor.getPhone_number());
         statement2.setInt(6, user_id);
         statement2.executeUpdate();
+    }
+    public static List<AppointmentDoctorInfo> getVisitsByDoctorId(){
+        List<AppointmentDoctorInfo> visits = new ArrayList<>();
+        int doctor_id = getDoctorByUsername(LogInController.doctor.getUsername()).getDoctor_id();
+        try {
+            String query = "SELECT b.name, a.appointment_id, d.first_name, d.last_name, d.second_name, p.animal_id, p.name AS petName, a.date, a.time  "
+                    + "FROM Appointments a "
+                    + "JOIN Animals p USING(animal_id) "
+                    + "JOIN Breeds b USING(breed_id) "
+                    + "JOIN Owners o ON (a.owner_id = o.owner_id)"
+                    + "JOIN Doctors d USING(doctor_id) "
+                    + "WHERE d.doctor_id = ?";
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1, doctor_id);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                int id = resultSet.getInt("appointment_id");
+                String ownerName = getOwnerNameByAppointmentId(id);
+                int petId = resultSet.getInt("animal_id");
+                String breed = resultSet.getString(1);
+                String petName = resultSet.getString("petName");
+                String date = resultSet.getDate("date").toString();
+                String time = resultSet.getTime("time").toString();
+
+                AppointmentDoctorInfo appointment = new AppointmentDoctorInfo(ownerName, petId, petName,breed, date, time);
+                visits.add(appointment);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return visits;
+    }
+    public static List<AppointmentDoctorInfo> getVisitsTodayByDoctorId(){
+        List<AppointmentDoctorInfo> visits = new ArrayList<>();
+        int doctor_id = getDoctorByUsername(LogInController.doctor.getUsername()).getDoctor_id();
+        try {
+            String query = "SELECT b.name, a.appointment_id, d.first_name, d.last_name, d.second_name, p.animal_id, p.name AS petName, a.date, a.time "
+                    + "FROM Appointments a "
+                    + "JOIN Animals p USING(animal_id) "
+                    + "JOIN Breeds b USING(breed_id) "
+                    + "JOIN Owners o ON (a.owner_id = o.owner_id)"
+                    + "JOIN Doctors d USING(doctor_id) "
+                    + "WHERE d.doctor_id = ? AND date = CURDATE()";
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1, doctor_id);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                int id = resultSet.getInt("appointment_id");
+                String ownerName = getOwnerNameByAppointmentId(id);
+                int petId = resultSet.getInt("animal_id");
+                String breed = resultSet.getString(1);
+                String petName = resultSet.getString("petName");
+                String time = resultSet.getTime("time").toString();
+
+                AppointmentDoctorInfo appointment = new AppointmentDoctorInfo(ownerName, petId, petName,breed, time);
+                visits.add(appointment);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return visits;
     }
 }
 

@@ -48,6 +48,8 @@ public class DoctorController implements Initializable {
     @FXML
     private TableColumn<Doctor, String> address;
     @FXML
+    private Button button_visits;
+    @FXML
     private TableColumn<Doctor, String> phone_number;
     public static Doctor doctor = LogInController.doctor;
 
@@ -60,6 +62,8 @@ public class DoctorController implements Initializable {
         iv_user.setImage(userImage);
         label_first_name.setText(LogInController.doctor.getFirst_name());
         button_logout.setOnAction(actionEvent -> {Main.changeScene("log-in-view.fxml");});
+        button_visits.setOnAction(actionEvent -> {Main.changeScene("appointment-doctor-view.fxml");});
+
     }
     private void updateTable(){
         table_info.getItems().clear();
