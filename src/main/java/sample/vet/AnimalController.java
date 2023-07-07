@@ -51,6 +51,8 @@ public class AnimalController implements Initializable {
     Label label_message;
     @FXML
     TextField tf_breed;
+    @FXML
+    private Button button_visits;
     long id = 0;
     private final ObservableList<Animal> data = FXCollections.observableArrayList();
 
@@ -64,6 +66,7 @@ public class AnimalController implements Initializable {
         label_first_name.setText(LogInController.owner.getFirst_name());
         button_logout.setOnAction(actionEvent -> {Main.changeScene("log-in-view.fxml");});
         button_profile.setOnAction(actionEvent -> {Main.changeScene("owner-view.fxml");});
+        button_visits.setOnAction(actionEvent -> {Main.changeScene("appointment-view.fxml");});
     }
     private void updateTable() {
         tv_pets.getItems().clear();
@@ -75,7 +78,9 @@ public class AnimalController implements Initializable {
         data.addAll(getInfoAboutPet());
         tc_id.setCellValueFactory(new PropertyValueFactory<>("animal_id"));
         tc_name.setCellValueFactory(new PropertyValueFactory<>("name"));
-        tc_breed.setCellValueFactory(new PropertyValueFactory<>("breed"));
+        if (tc_breed !=null){
+            tc_breed.setCellValueFactory(new PropertyValueFactory<>("breed"));
+        }
     }
     @FXML
     void addPet(ActionEvent event) throws SQLException, ClassNotFoundException {

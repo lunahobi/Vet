@@ -1,7 +1,11 @@
 package sample.vet;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -120,24 +124,31 @@ public class DbConnection {
         statement2.executeUpdate();
     }
 
-    public static Owner getOwnerByUsername(String username) throws SQLException {
-        String query = "SELECT owner_id, last_name, first_name, second_name, address, phone_number, username, password FROM Owners JOIN Users USING (user_id) WHERE username = ?";
-        PreparedStatement statement = connection.prepareStatement(query);
-        statement.setString(1, username);
-        ResultSet resultSet = statement.executeQuery();
-        if (resultSet.next()) {
-            int id = resultSet.getInt("owner_id");
-            String last_name = resultSet.getString("last_name");
-            String first_name = resultSet.getString("first_name");
-            String second_name = resultSet.getString("second_name");
-            String address = resultSet.getString("address");
-            String phone_number = resultSet.getString("phone_number");
-            String password = resultSet.getString("password");
+    public static Owner getOwnerByUsername(String username){
+        try {
 
-            return new Owner(id, last_name, first_name, second_name, address, phone_number, username, password);
+            String query = "SELECT owner_id, last_name, first_name, second_name, address, phone_number, username, password FROM Owners JOIN Users USING (user_id) WHERE username = ?";
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1, username);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                int id = resultSet.getInt("owner_id");
+                String last_name = resultSet.getString("last_name");
+                String first_name = resultSet.getString("first_name");
+                String second_name = resultSet.getString("second_name");
+                String address = resultSet.getString("address");
+                String phone_number = resultSet.getString("phone_number");
+                String password = resultSet.getString("password");
+
+                return new Owner(id, last_name, first_name, second_name, address, phone_number, username, password);
+            }
+        }
+        catch (SQLException e){
+            e.printStackTrace();
         }
         return null;
     }
+
     public static Breed getBreedById(int breed_id) {
         String query = "SELECT breed_id, name FROM Breeds WHERE breed_id = ?";
 
@@ -164,7 +175,7 @@ public class DbConnection {
             String query = "SELECT animal_id, name, breed_id FROM Animals WHERE owner_id = ?";
             Long owner_id = (long) getOwnerByUsername(LogInController.owner.getUsername()).getOwner_id();
             PreparedStatement statement = connection.prepareStatement(query);
-            statement.setLong(1,owner_id);
+            statement.setLong(1, owner_id);
 
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
@@ -181,6 +192,7 @@ public class DbConnection {
         }
         return petList;
     }
+
     public Long getBreedIdByName(String name) throws SQLException {
         String query = "SELECT breed_id FROM Breeds WHERE name = ?";
         PreparedStatement statement = connection.prepareStatement(query);
@@ -191,10 +203,11 @@ public class DbConnection {
             breed_id = result.getInt("breed_id");
         return breed_id;
     }
+
     public void addAnimal(String name, String breed) throws SQLException {
         Long breed_id = getBreedIdByName(breed);
-        if (breed_id == 0){
-            String query2 = "INSERT INTO Breeds(name) VALUES(?)" ;
+        if (breed_id == 0) {
+            String query2 = "INSERT INTO Breeds(name) VALUES(?)";
             PreparedStatement statement2 = connection.prepareStatement(query2);
             statement2.setString(1, breed);
             statement2.executeUpdate();
@@ -206,7 +219,7 @@ public class DbConnection {
                 breed_id = result1.getLong("breed_id");
         }
         Long owner_id = (long) getOwnerByUsername(LogInController.owner.getUsername()).getOwner_id();
-        String query1 = "INSERT INTO Animals(owner_id, breed_id, name) VALUES(?, ?, ?)" ;
+        String query1 = "INSERT INTO Animals(owner_id, breed_id, name) VALUES(?, ?, ?)";
         PreparedStatement statement1 = connection.prepareStatement(query1);
         statement1.setLong(1, owner_id);
         statement1.setLong(2, breed_id);
@@ -216,8 +229,8 @@ public class DbConnection {
 
     public void updateAnimal(Long id, String name, String breed) throws SQLException {
         Long breed_id = getBreedIdByName(breed);
-        if (breed_id == 0){
-            String query2 = "INSERT INTO Breeds(name) VALUES(?)" ;
+        if (breed_id == 0) {
+            String query2 = "INSERT INTO Breeds(name) VALUES(?)";
             PreparedStatement statement2 = connection.prepareStatement(query2);
             statement2.setString(1, breed);
             statement2.executeUpdate();
@@ -235,10 +248,85 @@ public class DbConnection {
         statement2.setLong(3, id);
         statement2.executeUpdate();
     }
+
     public void deleteAnimal(Long id) throws SQLException {
         String query = "DELETE FROM Animals WHERE animal_id = ?";
         PreparedStatement statement2 = connection.prepareStatement(query);
         statement2.setLong(1, id);
         statement2.executeUpdate();
     }
+
+    public static List<AppointmentInfo> getVisitsByOwnerId(){
+        List<AppointmentInfo> visits = new ArrayList<>();
+        int owner_id = getOwnerByUsername(LogInController.owner.getUsername()).getOwner_id();
+        try {
+            String query = "SELECT a.appointment_id, d.first_name, d.last_name, d.second_name, p.animal_id, p.name AS petName, a.date, a.time "
+                    + "FROM Appointments a "
+                    + "JOIN Animals p USING(animal_id) "
+                    + "JOIN Owners o ON (a.owner_id = o.owner_id)"
+                    + "JOIN Doctors d USING(doctor_id) "
+                    + "WHERE o.owner_id = ?";
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1, owner_id);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                int id = resultSet.getInt("appointment_id");
+                String doctorName = getDoctorNameByAppointmentId(id);
+                int petId = resultSet.getInt("animal_id");
+                String petName = resultSet.getString("petName");
+                String date = resultSet.getDate("date").toString();
+                String time = resultSet.getTime("time").toString();
+
+                AppointmentInfo appointment = new AppointmentInfo(id, doctorName, petId, petName, date, time);
+                visits.add(appointment);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return visits;
+    }
+
+    public static String getDoctorNameByAppointmentId(int appointment_id){
+        try {
+            String query = "SELECT first_name, last_name, second_name FROM Doctors JOIN Appointments USING(doctor_id) WHERE appointment_id = ?";
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1, appointment_id);
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                String first_name = resultSet.getString("first_name");
+                String last_name = resultSet.getString("last_name");
+                String second_name = resultSet.getString("second_name");
+                return last_name + " " + first_name + " " + second_name;
+            }
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+    public static ObservableList<Disease> getDiseasesByVisitId(int visitId) {
+        ObservableList<Disease> diseases = FXCollections.observableArrayList();
+
+        try {
+            String query = "SELECT d.disease_id, d.scientific_name, d.common_name FROM Diseases d JOIN AppointmentsDiseases ad USING (disease_id) JOIN Appointments v USING(appointment_id) WHERE v.appointment_id = ?";
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1, visitId);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                int id = resultSet.getInt("disease_id");
+                String name = resultSet.getString("scientific_name");
+                String commonName = resultSet.getString("common_name");
+                Disease disease = new Disease(id, commonName, name);
+                diseases.add(disease);
+            }
+        } catch (SQLException e) {
+            System.out.println("Произошла ошибка при получении заболеваний");
+            throw new RuntimeException(e);
+        }
+        return diseases;
+    }
 }
+

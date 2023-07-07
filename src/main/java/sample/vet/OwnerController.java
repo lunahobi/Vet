@@ -64,6 +64,7 @@ public class OwnerController implements Initializable {
         label_first_name.setText(LogInController.owner.getFirst_name());
         button_pets.setOnAction(actionEvent -> {Main.changeScene("animal-view.fxml");});
         button_logout.setOnAction(actionEvent -> {Main.changeScene("log-in-view.fxml");});
+        button_visits.setOnAction(actionEvent -> {Main.changeScene("appointment-view.fxml");});
     }
     private void updateTable(){
         table_info.getItems().clear();
