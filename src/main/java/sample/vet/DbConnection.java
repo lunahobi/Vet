@@ -212,6 +212,26 @@ public class DbConnection {
         }
         return petList;
     }
+    public static List<User> getInfoAboutUsers() {
+        List<User> petList = new ArrayList<>();
+
+        try {
+            String query = "SELECT user_id, username, password, role_id FROM Users";
+            PreparedStatement statement = connection.prepareStatement(query);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt("user_id");
+                String login = rs.getString("username");
+                String password = rs.getString("password");
+                int role_id = rs.getInt("role_id");
+                User user = new User(id, login, password, role_id);
+                petList.add(user);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return petList;
+    }
 
     public Long getBreedIdByName(String name) throws SQLException {
         String query = "SELECT breed_id FROM Breeds WHERE name = ?";
@@ -246,6 +266,14 @@ public class DbConnection {
         statement1.setString(3, name);
         statement1.executeUpdate();
     }
+    public void addUser(String username, String password, int role_id) throws SQLException {
+        String query1 = "INSERT INTO Users(username, password, role_id) VALUES(?, ?, ?)";
+        PreparedStatement statement1 = connection.prepareStatement(query1);
+        statement1.setString(1, username);
+        statement1.setString(2, password);
+        statement1.setInt(3, role_id);
+        statement1.executeUpdate();
+    }
 
     public void updateAnimal(Long id, String name, String breed) throws SQLException {
         Long breed_id = getBreedIdByName(breed);
@@ -268,9 +296,24 @@ public class DbConnection {
         statement2.setLong(3, id);
         statement2.executeUpdate();
     }
+    public void updateUser(int id, String username, String password, int role_id) throws SQLException {
+        String query2 = "UPDATE Users SET username = ?, password = ?, role_id = ? WHERE user_id = ?";
+        PreparedStatement statement2 = connection.prepareStatement(query2);
+        statement2.setString(1, username);
+        statement2.setString(2, password);
+        statement2.setInt(3, role_id);
+        statement2.setInt(4, id);
+        statement2.executeUpdate();
+    }
 
     public void deleteAnimal(Long id) throws SQLException {
         String query = "DELETE FROM Animals WHERE animal_id = ?";
+        PreparedStatement statement2 = connection.prepareStatement(query);
+        statement2.setLong(1, id);
+        statement2.executeUpdate();
+    }
+    public void deleteUser(int id) throws SQLException {
+        String query = "DELETE FROM Users WHERE user_id = ?";
         PreparedStatement statement2 = connection.prepareStatement(query);
         statement2.setLong(1, id);
         statement2.executeUpdate();

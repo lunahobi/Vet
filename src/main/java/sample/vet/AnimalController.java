@@ -117,6 +117,8 @@ public class AnimalController implements Initializable {
     void clearFields(){
         tf_breed.setText("");
         tf_name.setText("");
+        label_message.setText("");
+        button_add.setDisable(false);
     }
     @FXML
     void getData(MouseEvent event) {
