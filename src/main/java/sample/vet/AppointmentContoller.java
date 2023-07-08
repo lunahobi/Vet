@@ -41,22 +41,22 @@ public class AppointmentContoller implements Initializable {
     @FXML
     private Label label_message;
     @FXML
-    private TableColumn<AppointmentInfo, Integer> tc_animal_id;
+    private TableColumn<Appointment, Integer> tc_animal_id;
 
     @FXML
-    private TableColumn<AppointmentInfo, String> tc_date;
+    private TableColumn<Appointment, String> tc_date;
 
     @FXML
-    private TableColumn<AppointmentInfo, String> tc_doctor_name;
+    private TableColumn<Appointment, String> tc_doctor_name;
 
     @FXML
-    private TableColumn<AppointmentInfo, Integer> tc_id;
+    private TableColumn<Appointment, Integer> tc_id;
 
     @FXML
-    private TableColumn<AppointmentInfo, String> tc_name;
+    private TableColumn<Appointment, String> tc_name;
 
     @FXML
-    private TableColumn<AppointmentInfo, String> tc_time;
+    private TableColumn<Appointment, String> tc_time;
     @FXML
     private TableView<Disease> tv_diseases;
     @FXML
@@ -66,8 +66,8 @@ public class AppointmentContoller implements Initializable {
     int id = 0;
 
     @FXML
-    private TableView<AppointmentInfo> tv_appointment;
-    private final ObservableList<AppointmentInfo> data = FXCollections.observableArrayList();
+    private TableView<Appointment> tv_appointment;
+    private final ObservableList<Appointment> data = FXCollections.observableArrayList();
     private final ObservableList<Disease> data1 = FXCollections.observableArrayList();
 
     @Override
@@ -76,8 +76,8 @@ public class AppointmentContoller implements Initializable {
         File userFile = new File("images/user_white.png");
         Image userImage = new Image(userFile.toURI().toString());
         iv_user.setImage(userImage);
-        label_first_name.setText(UserController.owner.getFirst_name());
-        button_logout.setOnAction(actionEvent -> {Main.changeScene("log-in-view.fxml");});
+        label_first_name.setText(MainController.owner.getFirst_name());
+        button_logout.setOnAction(actionEvent -> {Main.changeScene("main-view.fxml");});
         button_profile.setOnAction(actionEvent -> {Main.changeScene("owner-view.fxml");});
         buttonPets.setOnAction(actionEvent -> {Main.changeScene("animal-view.fxml");});
     }
@@ -107,7 +107,7 @@ public class AppointmentContoller implements Initializable {
     }
     @FXML
     void getData(MouseEvent event) {
-        AppointmentInfo appointmentInfo = tv_appointment.getSelectionModel().getSelectedItem();
+        Appointment appointmentInfo = tv_appointment.getSelectionModel().getSelectedItem();
         id = appointmentInfo.getId();
         updateTable1();
     }

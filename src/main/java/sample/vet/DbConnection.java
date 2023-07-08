@@ -124,12 +124,12 @@ public class DbConnection {
     }
 
     public void updateOwner(Owner owner) throws SQLException {
-        int user_id = getUserID(UserController.owner.getUsername());
+        int user_id = getUserID(MainController.owner.getUsername());
 
         String query1 = "UPDATE Users SET password = ?, role_id = ? WHERE user_id = ?";
         PreparedStatement statement1 = connection.prepareStatement(query1);
         statement1.setString(1, owner.getPassword());
-        statement1.setLong(2, getRoleIdByUsername(UserController.owner.getUsername()));
+        statement1.setLong(2, getRoleIdByUsername(MainController.owner.getUsername()));
         statement1.setInt(3, user_id);
         statement1.executeUpdate();
 
@@ -193,7 +193,7 @@ public class DbConnection {
 
         try {
             String query = "SELECT animal_id, name, breed_id FROM Animals WHERE owner_id = ?";
-            Long owner_id = (long) getOwnerByUsername(UserController.owner.getUsername()).getOwner_id();
+            Long owner_id = (long) getOwnerByUsername(MainController.owner.getUsername()).getOwner_id();
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setLong(1, owner_id);
 
@@ -258,7 +258,7 @@ public class DbConnection {
             if (result1.next())
                 breed_id = result1.getLong("breed_id");
         }
-        Long owner_id = (long) getOwnerByUsername(UserController.owner.getUsername()).getOwner_id();
+        Long owner_id = (long) getOwnerByUsername(MainController.owner.getUsername()).getOwner_id();
         String query1 = "INSERT INTO Animals(owner_id, breed_id, name) VALUES(?, ?, ?)";
         PreparedStatement statement1 = connection.prepareStatement(query1);
         statement1.setLong(1, owner_id);
@@ -319,9 +319,9 @@ public class DbConnection {
         statement2.executeUpdate();
     }
 
-    public static List<AppointmentInfo> getVisitsByOwnerId(){
-        List<AppointmentInfo> visits = new ArrayList<>();
-        int owner_id = getOwnerByUsername(UserController.owner.getUsername()).getOwner_id();
+    public static List<Appointment> getVisitsByOwnerId(){
+        List<Appointment> visits = new ArrayList<>();
+        int owner_id = getOwnerByUsername(MainController.owner.getUsername()).getOwner_id();
         try {
             String query = "SELECT a.appointment_id, d.first_name, d.last_name, d.second_name, p.animal_id, p.name AS petName, a.date, a.time "
                     + "FROM Appointments a "
@@ -341,7 +341,7 @@ public class DbConnection {
                 String date = resultSet.getDate("date").toString();
                 String time = resultSet.getTime("time").toString();
 
-                AppointmentInfo appointment = new AppointmentInfo(id, doctorName, petId, petName, date, time);
+                Appointment appointment = new Appointment(id, doctorName, petId, petName, date, time);
                 visits.add(appointment);
             }
         } catch (SQLException e) {
@@ -434,12 +434,12 @@ public class DbConnection {
         return null;
     }
     public void updateDoctor(Doctor doctor) throws SQLException {
-        int user_id = getUserID(UserController.doctor.getUsername());
+        int user_id = getUserID(MainController.doctor.getUsername());
 
         String query1 = "UPDATE Users SET password = ?, role_id = ? WHERE user_id = ?";
         PreparedStatement statement1 = connection.prepareStatement(query1);
         statement1.setString(1, doctor.getPassword());
-        statement1.setLong(2, getRoleIdByUsername(UserController.doctor.getUsername()));
+        statement1.setLong(2, getRoleIdByUsername(MainController.doctor.getUsername()));
         statement1.setInt(3, user_id);
         statement1.executeUpdate();
 
@@ -453,9 +453,9 @@ public class DbConnection {
         statement2.setInt(6, user_id);
         statement2.executeUpdate();
     }
-    public static List<AppointmentDoctorInfo> getVisitsByDoctorId(){
-        List<AppointmentDoctorInfo> visits = new ArrayList<>();
-        int doctor_id = getDoctorByUsername(UserController.doctor.getUsername()).getDoctor_id();
+    public static List<AppointmentDoctor> getVisitsByDoctorId(){
+        List<AppointmentDoctor> visits = new ArrayList<>();
+        int doctor_id = getDoctorByUsername(MainController.doctor.getUsername()).getDoctor_id();
         try {
             String query = "SELECT b.name, a.appointment_id, d.first_name, d.last_name, d.second_name, p.animal_id, p.name AS petName, a.date, a.time  "
                     + "FROM Appointments a "
@@ -477,7 +477,7 @@ public class DbConnection {
                 String date = resultSet.getDate("date").toString();
                 String time = resultSet.getTime("time").toString();
 
-                AppointmentDoctorInfo appointment = new AppointmentDoctorInfo(ownerName, petId, petName,breed, date, time);
+                AppointmentDoctor appointment = new AppointmentDoctor(ownerName, petId, petName,breed, date, time);
                 visits.add(appointment);
             }
         } catch (SQLException e) {
@@ -485,9 +485,9 @@ public class DbConnection {
         }
         return visits;
     }
-    public static List<AppointmentDoctorInfo> getVisitsTodayByDoctorId(){
-        List<AppointmentDoctorInfo> visits = new ArrayList<>();
-        int doctor_id = getDoctorByUsername(UserController.doctor.getUsername()).getDoctor_id();
+    public static List<AppointmentDoctor> getVisitsTodayByDoctorId(){
+        List<AppointmentDoctor> visits = new ArrayList<>();
+        int doctor_id = getDoctorByUsername(MainController.doctor.getUsername()).getDoctor_id();
         try {
             String query = "SELECT b.name, a.appointment_id, d.first_name, d.last_name, d.second_name, p.animal_id, p.name AS petName, a.date, a.time "
                     + "FROM Appointments a "
@@ -508,7 +508,7 @@ public class DbConnection {
                 String petName = resultSet.getString("petName");
                 String time = resultSet.getTime("time").toString();
 
-                AppointmentDoctorInfo appointment = new AppointmentDoctorInfo(ownerName, petId, petName,breed, time);
+                AppointmentDoctor appointment = new AppointmentDoctor(ownerName, petId, petName,breed, time);
                 visits.add(appointment);
             }
         } catch (SQLException e) {

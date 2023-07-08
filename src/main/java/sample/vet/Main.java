@@ -16,7 +16,7 @@ public class Main extends Application {
     public void start(Stage s) throws IOException {
         stage = s;
         stage.setTitle("Veterinary clinic");
-        Parent screen = FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("log-in-view.fxml")));
+        Parent screen = FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("main-view.fxml")));
         stage.setScene(new Scene(screen));
         stage.show();
     }

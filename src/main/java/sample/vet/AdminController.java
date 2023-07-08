@@ -92,7 +92,7 @@ public class AdminController implements Initializable {
         File userFile = new File("images/user_white.png");
         Image userImage = new Image(userFile.toURI().toString());
         iv_user.setImage(userImage);
-        button_logout.setOnAction(actionEvent -> {Main.changeScene("log-in-view.fxml");});
-        button_users.setOnAction(actionEvent -> {Main.changeScene("users-view.fxml");});
+        button_logout.setOnAction(actionEvent -> {Main.changeScene("main-view.fxml");});
+        button_users.setOnAction(actionEvent -> {Main.changeScene("user-view.fxml");});
     }
 }

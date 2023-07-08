@@ -51,7 +51,7 @@ public class OwnerController implements Initializable {
     private Button button_pets;
     @FXML
     private Button button_visits;
-    public static Owner owner = UserController.owner;
+    public static Owner owner = MainController.owner;
 
 
     @Override
@@ -60,9 +60,9 @@ public class OwnerController implements Initializable {
         File userFile = new File("images/user_white.png");
         Image userImage = new Image(userFile.toURI().toString());
         iv_user.setImage(userImage);
-        label_first_name.setText(UserController.owner.getFirst_name());
+        label_first_name.setText(MainController.owner.getFirst_name());
         button_pets.setOnAction(actionEvent -> {Main.changeScene("animal-view.fxml");});
-        button_logout.setOnAction(actionEvent -> {Main.changeScene("log-in-view.fxml");});
+        button_logout.setOnAction(actionEvent -> {Main.changeScene("main-view.fxml");});
         button_visits.setOnAction(actionEvent -> {Main.changeScene("appointment-view.fxml");});
     }
     private void updateTable(){

@@ -1,79 +1,68 @@
 package sample.vet;
 
 
-import java.sql.Time;
-import java.util.Date;
-
 public class Appointment {
-    private long appointment_id;
-    private long animal_id;
-    private long owner_id;
-    private long doctor_id;
-    private Date date;
-    private Time time;
+    private int id;
+    private String doctor_name;
+    private int animal_id;
+    private String animal_name;
+    private String date;
+    private String time;
 
-    public Appointment(long appointment_id, long animal_id, long owner_id, long doctor_id, Date date, Time time) {
-        this.appointment_id = appointment_id;
-        this.animal_id = animal_id;
-        this.owner_id = owner_id;
-        this.doctor_id = doctor_id;
-        this.date = date;
-        this.time = time;
-    }
-    public Appointment(long animal_id, long owner_id, long doctor_id, Date date, Time time) {
-        this.animal_id = animal_id;
-        this.owner_id = owner_id;
-        this.doctor_id = doctor_id;
+    public Appointment(int id, String doctorName, int petId, String petName, String date, String time) {
+        this.id = id;
+        this.doctor_name = doctorName;
+        this.animal_id = petId;
+        this.animal_name = petName;
         this.date = date;
         this.time = time;
     }
 
-    public long getAppointment_id() {
-        return appointment_id;
-    }
-
-    public long getAnimal_id() {
-        return animal_id;
-    }
-
-    public long getOwner_id() {
-        return owner_id;
-    }
-
-    public long getDoctor_id() {
-        return doctor_id;
-    }
-
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public Time getTime() {
+    public int getId() {
+        return id;
+    }
+
+    public String getTime() {
         return time;
     }
 
-    public void setAppointment_id(long appointment_id) {
-        this.appointment_id = appointment_id;
+    public String getDoctor_name() {
+        return doctor_name;
     }
 
-    public void setAnimal_id(long animal_id) {
-        this.animal_id = animal_id;
+    public String getAnimal_name() {
+        return animal_name;
     }
 
-    public void setDoctor_id(long doctor_id) {
-        this.doctor_id = doctor_id;
+    public int getAnimal_id(){
+        return animal_id;
     }
 
-    public void setOwner_id(long owner_id) {
-        this.owner_id = owner_id;
+    public void setTime(String time) {
+        this.time = time;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
-    public void setTime(Time time) {
-        this.time = time;
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setDoctor_name(String doctor_name) {
+        this.doctor_name = doctor_name;
+    }
+
+    public void setAnimal_id(int animal_id) {
+        this.animal_id = animal_id;
+    }
+
+    public void setAnimal_name(String animal_name) {
+        this.animal_name = animal_name;
     }
 }
-

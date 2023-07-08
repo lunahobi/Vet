@@ -33,44 +33,44 @@ public class AppointmentDoctorController implements Initializable {
     private Label label_first_name;
 
     @FXML
-    private TableColumn<AppointmentDoctorInfo, Integer> tc_animal_id1;
+    private TableColumn<AppointmentDoctor, Integer> tc_animal_id1;
 
     @FXML
-    private TableColumn<AppointmentDoctorInfo, Integer> tc_animal_id2;
+    private TableColumn<AppointmentDoctor, Integer> tc_animal_id2;
 
     @FXML
-    private TableColumn<AppointmentDoctorInfo, String> tc_breed1;
+    private TableColumn<AppointmentDoctor, String> tc_breed1;
 
     @FXML
-    private TableColumn<AppointmentDoctorInfo, String> tc_breed2;
+    private TableColumn<AppointmentDoctor, String> tc_breed2;
 
     @FXML
-    private TableColumn<AppointmentDoctorInfo, String> tc_name1;
+    private TableColumn<AppointmentDoctor, String> tc_name1;
 
     @FXML
-    private TableColumn<AppointmentDoctorInfo, String> tc_name2;
+    private TableColumn<AppointmentDoctor, String> tc_name2;
 
     @FXML
-    private TableColumn<AppointmentDoctorInfo, String> tc_owner1;
+    private TableColumn<AppointmentDoctor, String> tc_owner1;
 
     @FXML
-    private TableColumn<AppointmentDoctorInfo, String> tc_owner2;
+    private TableColumn<AppointmentDoctor, String> tc_owner2;
 
     @FXML
-    private TableColumn<AppointmentDoctorInfo, String> tc_time1;
+    private TableColumn<AppointmentDoctor, String> tc_time1;
 
     @FXML
-    private TableColumn<AppointmentDoctorInfo, String> tc_time2;
+    private TableColumn<AppointmentDoctor, String> tc_time2;
 
     @FXML
-    private TableView<AppointmentDoctorInfo> tv_visits_all;
+    private TableView<AppointmentDoctor> tv_visits_all;
     @FXML
-    private TableColumn<AppointmentDoctorInfo, String> tc_date;
+    private TableColumn<AppointmentDoctor, String> tc_date;
 
     @FXML
-    private TableView<AppointmentDoctorInfo> tv_visits_today;
-    private final ObservableList<AppointmentDoctorInfo> data = FXCollections.observableArrayList();
-    private final ObservableList<AppointmentDoctorInfo> data1 = FXCollections.observableArrayList();
+    private TableView<AppointmentDoctor> tv_visits_today;
+    private final ObservableList<AppointmentDoctor> data = FXCollections.observableArrayList();
+    private final ObservableList<AppointmentDoctor> data1 = FXCollections.observableArrayList();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -79,8 +79,8 @@ public class AppointmentDoctorController implements Initializable {
         File userFile = new File("images/user_white.png");
         Image userImage = new Image(userFile.toURI().toString());
         iv_user.setImage(userImage);
-        label_first_name.setText(UserController.doctor.getFirst_name());
-        button_logout.setOnAction(actionEvent -> {Main.changeScene("log-in-view.fxml");});
+        label_first_name.setText(MainController.doctor.getFirst_name());
+        button_logout.setOnAction(actionEvent -> {Main.changeScene("main-view.fxml");});
         button_profile.setOnAction(actionEvent -> {Main.changeScene("doctor-view.fxml");});
     }
     private void updateTable(){

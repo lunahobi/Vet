@@ -50,7 +50,7 @@ public class DoctorController implements Initializable {
     private Button button_visits;
     @FXML
     private TableColumn<Doctor, String> phone_number;
-    public static Doctor doctor = UserController.doctor;
+    public static Doctor doctor = MainController.doctor;
 
 
     @Override
@@ -59,8 +59,8 @@ public class DoctorController implements Initializable {
         File userFile = new File("images/user_white.png");
         Image userImage = new Image(userFile.toURI().toString());
         iv_user.setImage(userImage);
-        label_first_name.setText(UserController.doctor.getFirst_name());
-        button_logout.setOnAction(actionEvent -> {Main.changeScene("log-in-view.fxml");});
+        label_first_name.setText(MainController.doctor.getFirst_name());
+        button_logout.setOnAction(actionEvent -> {Main.changeScene("main-view.fxml");});
         button_visits.setOnAction(actionEvent -> {Main.changeScene("appointment-doctor-view.fxml");});
 
     }

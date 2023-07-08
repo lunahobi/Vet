@@ -1,94 +1,207 @@
 package sample.vet;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 
 import java.io.File;
 import java.net.URL;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ResourceBundle;
 
+import static sample.vet.DbConnection.getInfoAboutUsers;
+
 public class UserController implements Initializable {
-    @FXML
-    private Button button_login;
 
     @FXML
-    private Button button_signup;
+    private Button button_add;
+
+    @FXML
+    private Button button_clear;
+
+    @FXML
+    private Button button_delete;
+
+    @FXML
+    private Button button_logout;
+
+    @FXML
+    private Button button_update;
+
+    @FXML
+    private Button button_users;
+
+    @FXML
+    private ChoiceBox<String> choiceBox;
+
+    @FXML
+    private ImageView iv_user;
+
+    @FXML
+    private TableView<User> tv_users;
+    @FXML
+    private TableColumn<User, Integer> tc_role_id;
+
+    @FXML
+    private TableColumn<User, Integer> tc_id;
+
+    @FXML
+    private TableColumn<User, String> tc_password;
+
+    @FXML
+    private TableColumn<User, String> tc_username;
+    @FXML
+    private PasswordField tf_confirm_password;
+
+    @FXML
+    private PasswordField tf_password;
+    @FXML
+    private Label label_message;
+
     @FXML
     private TextField tf_username;
     @FXML
-    private PasswordField pf_password;
+    private Button button_reg;
+    private String[] roles = {"Админ", "Доктор", "Владелец"};
+    private int role_id;
+    int id = 0;
+    private final ObservableList<User> data = FXCollections.observableArrayList();
+
     @FXML
-    private Label label_text;
+    void addUser(ActionEvent event) throws SQLException, ClassNotFoundException {
+        if (choiceBox.equals("Админ")){
+            role_id = 3;
+        }
+        else if (choiceBox.equals("Доктор")){
+            role_id = 1;
+        }
+        else{
+            role_id = 2;
+        }
+        if (tf_password.getText().equals("") || tf_confirm_password.getText().equals("") || tf_username.getText().equals("") || choiceBox.getSelectionModel().isEmpty()){
+            label_message.setText("Не все поля заполнены");
+        }
+        else if(!tf_password.getText().equals(tf_confirm_password.getText())){
+            label_message.setText("Пароли не совпадают");
+        }
+        else if(DbConnection.getInstance().isUserNameExists(tf_username.getText())){
+            label_message.setText("Логин занят");
+        }
+        else{
+            DbConnection.getInstance().addUser(tf_username.getText(), User.hashPass(tf_password.getText()), role_id);
+            updateTable();
+        }
+    }
+
     @FXML
-    private ImageView logoImageView;
-    public static Owner owner;
-    public static Doctor doctor;
+    void clearFields(ActionEvent event) {
+        tf_username.setText("");
+        tf_password.setText("");
+        tf_confirm_password.setText("");
+        choiceBox.getSelectionModel().clearSelection();
+        label_message.setText("");
+        button_add.setDisable(false);
+    }
+
+    @FXML
+    void deleteUser(ActionEvent event) throws SQLException, ClassNotFoundException {
+        DbConnection.getInstance().deleteUser(id);
+        if (id == 0){
+            label_message.setText("Не выбрана запись из таблицы");
+        }
+        else{
+            label_message.setText("Успешно удалены записи о питомце с id "+ id);
+        }
+        updateTable();
+    }
+
+    @FXML
+    void updateUser(ActionEvent event) throws SQLException, ClassNotFoundException {
+        if (choiceBox.getSelectionModel().isSelected(0)){
+            role_id = 3;
+        }
+        else if (choiceBox.getSelectionModel().isSelected(1)){
+            role_id = 1;
+        }
+        else{
+            role_id = 2;
+        }
+
+        if (id == 0){
+            label_message.setText("Не выбрана запись из таблицы");
+        }
+        else if (tf_password.getText().equals("") || tf_confirm_password.getText().equals("") || tf_username.getText().equals("") || choiceBox.getSelectionModel().isEmpty()){
+            label_message.setText("Не все поля заполнены");
+        }
+        else if(!tf_password.getText().equals(tf_confirm_password.getText())){
+            label_message.setText("Пароли не совпадают");
+        }
+        else if(DbConnection.getInstance().isUserNameExists(tf_username.getText())){
+            label_message.setText("Логин занят");
+        }
+        else{
+            DbConnection.getInstance().updateUser(id, tf_username.getText(), User.hashPass(tf_password.getText()),  role_id);
+            updateTable();
+            label_message.setText("Успешно обновлена запись о питомце с id "+ id);
+        }
+
+    }
+    private void updateTable() {
+        tv_users.getItems().clear();
+        getInfo();
+        tv_users.setItems(data);
+    }
+
+    public void getInfo() {
+        data.addAll(getInfoAboutUsers());
+        tc_id.setCellValueFactory(new PropertyValueFactory<>("user_id"));
+        tc_username.setCellValueFactory(new PropertyValueFactory<>("username"));
+        tc_password.setCellValueFactory(new PropertyValueFactory<>("password"));
+        tc_role_id.setCellValueFactory(new PropertyValueFactory<>("role_id"));
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        File logoFile = new File("images/logo.png");
-        Image logoImage = new Image(logoFile.toURI().toString());
-        logoImageView.setImage(logoImage);
-        button_signup.setOnAction(actionEvent -> {Main.changeScene("sign-up-view.fxml");});
-
-    }
-
-    public void loginButtonOnAction(ActionEvent event) throws ClassNotFoundException, SQLException {
-        if (tf_username.getText().isBlank() == false && pf_password.getText().isBlank() == false){
-            validateLogin();
-
+        updateTable();
+        File userFile = new File("images/user_white.png");
+        Image userImage = new Image(userFile.toURI().toString());
+        iv_user.setImage(userImage);
+        button_logout.setOnAction(actionEvent -> {Main.changeScene("main-view.fxml");});
+        button_reg.setOnAction(actionEvent -> {Main.changeScene("admin-view.fxml");});
+        choiceBox.getItems().addAll(roles);
+        if (choiceBox.equals("Админ")){
+            role_id = 3;
         }
-        else if (tf_username.getText().isBlank() == false && pf_password.getText().isBlank() == true){
-            label_text.setText("Вы не ввели пароль");
-        }
-        else if (tf_username.getText().isBlank() == true && pf_password.getText().isBlank() == false){
-            label_text.setText("Вы не ввели логин");
+        else if (choiceBox.equals("Доктор")){
+            role_id = 1;
         }
         else{
-            label_text.setText("Вы не ввели логин и пароль");
+            role_id = 2;
         }
     }
-    private void validateLogin() throws ClassNotFoundException, SQLException {
-        DbConnection connection = DbConnection.getInstance();
-        String verifyLogin = "SELECT COUNT(1) FROM Users WHERE username = '" + tf_username.getText() + "' AND password = '" + User.hashPass(pf_password.getText())+"'";
-        try {
-            Statement statement = connection.getConnection().createStatement();
-            ResultSet queryResult = statement.executeQuery(verifyLogin);
-
-            while (queryResult.next()){
-                if (queryResult.getInt(1) == 1){
-                    int role_id = DbConnection.getInstance().getRoleIdByUsername(tf_username.getText());
-                    if (role_id == 1){
-
-                        doctor = DbConnection.getInstance().getDoctorByUsername(tf_username.getText());
-                        Main.changeScene("doctor-view.fxml");
-                    }
-                    else if (role_id == 2){
-                        owner = DbConnection.getInstance().getOwnerByUsername(tf_username.getText());
-                        Main.changeScene("owner-view.fxml");
-                    }
-                    else{
-                        Main.changeScene("admin-view.fxml");
-                    }
-                }
-                else {
-                    label_text.setText("Неправильные логин или пароль");
-                }
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-            e.getCause();
+    @FXML
+    void getData(MouseEvent event) {
+        User user = tv_users.getSelectionModel().getSelectedItem();
+        id = (int) user.getUser_id();
+        tf_username.setText(user.getUsername());
+        tf_password.setText(user.getPassword());
+        int r_id = (int) user.getRole_id();
+        button_add.setDisable(true);
+        if (r_id == 1){
+            choiceBox.getSelectionModel().select(1);
+        }
+        else if (r_id == 2){
+            choiceBox.getSelectionModel().select(2);
+        }
+        else {
+            choiceBox.getSelectionModel().select(0);
         }
     }
-
 }
