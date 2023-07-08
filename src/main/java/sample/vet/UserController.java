@@ -143,9 +143,6 @@ public class UserController implements Initializable {
         else if(!tf_password.getText().equals(tf_confirm_password.getText())){
             label_message.setText("Пароли не совпадают");
         }
-        else if(DbConnection.getInstance().isUserNameExists(tf_username.getText())){
-            label_message.setText("Логин занят");
-        }
         else{
             DbConnection.getInstance().updateUser(id, tf_username.getText(), User.hashPass(tf_password.getText()),  role_id);
             updateTable();
